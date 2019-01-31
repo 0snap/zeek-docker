@@ -27,4 +27,4 @@ The container expects that you pass arguments to it, everything is passed to the
 
     $ docker run --net=host --name=zeek -ti fixel/zeek -i enp0s31f6
 
-The logs will be stored in `/usr/local/bro/logs/current`. The parent folder `/usr/local/bro/logs` is marked as docker volume. You can extract the logs by the usual means of container management.
+The logs will be stored in `/usr/local/bro/logs`, which is marked as docker volume. You can extract the logs by the usual means of container management.
