@@ -3,8 +3,7 @@ Zeek Docker
 
 - Builds [Zeek IDS](https://www.zeek.org/) from scratch (github master)
 - Container base is `debian:stretch`
-- Build stages to separate install dependencies
-- Enables `python 3`
+- Uses `python 3`
 - Installs the `bro-pkg` [packet manager](https://packages.zeek.org/)
 
 Zeek was formerly Bro IDS. Beware that the binary and some paths still contain the old name.
@@ -28,3 +27,7 @@ The container expects that you pass arguments to it, everything is passed to the
     $ docker run --net=host --name=zeek -ti fixel/zeek -i enp0s31f6
 
 The logs will be stored in `/usr/local/bro/logs`, which is marked as docker volume. You can extract the logs by the usual means of container management.
+
+### Computation Speed Up & Clustering
+
+Zeek IDS can only leverage one processor core. But it can be run in a worker cluster setup to share the computational costs of traffic processing. Find a docker based Zeek IDS worker cluster on github: [0ortmann/zeek-cluster](https://github.com/0ortmann/zeek-cluster), on docker hub: [fixel/zeek-cluster](https://cloud.docker.com/u/fixel/repository/docker/fixel/zeek-cluster).
