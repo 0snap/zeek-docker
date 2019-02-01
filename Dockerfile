@@ -54,7 +54,7 @@ COPY zeek-pkg.conf /usr/local/bro/bro-pkg/config
 EXPOSE 9999
 
 WORKDIR /usr/local/bro/logs
-COPY entrypoint.sh entrypoint.sh
-RUN chmod +x entrypoint.sh
+COPY entrypoint.sh /opt/zeek/entrypoint.sh
+RUN chmod +x /opt/zeek/entrypoint.sh
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/opt/zeek/entrypoint.sh"]
