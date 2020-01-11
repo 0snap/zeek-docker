@@ -1,6 +1,6 @@
 ## raw base image for the zeek communication library broker
 
-FROM debian:stretch
+FROM debian:buster
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -9,13 +9,15 @@ RUN apt-get update && apt-get install -y \
     git \
     libcurl4-openssl-dev \
     librocksdb-dev \
-    libssl1.0-dev \
+    libssl-dev \
     python3-dev \
     swig \
     --no-install-recommends
 
 RUN git clone --recursive https://github.com/zeek/broker.git /opt/broker-git
 WORKDIR /opt/broker-git
+ARG BROKER_VERSION
+RUN git checkout ${BROKER_VERSION:-master} && git fetch && git submodule update --recursive --init
 RUN ./configure
 RUN make -j4
 RUN make install

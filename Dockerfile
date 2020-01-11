@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:buster
 
 RUN apt-get update && apt-get install -y \
     bison \
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     libncurses5-dev \
     libpcap-dev \
     librocksdb-dev \
-    libssl1.0-dev \
+    libssl-dev \
     python3-dev \
     python3-pip \
     swig \
@@ -24,36 +24,29 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends
 
 # get latest zeek from source
-WORKDIR /opt
 RUN git clone --recursive https://github.com/zeek/zeek /opt/zeek-git
 WORKDIR /opt/zeek-git
+ARG ZEEK_VERSION
+RUN git checkout ${ZEEK_VERSION:-master} && git fetch && git submodule update --recursive --init
 
 RUN ./configure --with-jemalloc=/usr/lib/x86_64-linux-gnu
 RUN make -j4 install
 
-WORKDIR /usr/share/GeoIP
-RUN wget -N http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz
-RUN wget -N http://geolite.maxmind.com/download/geoip/database/GeoLite2-ASN.tar.gz
-RUN tar xvzf GeoLite2-City.tar.gz
-RUN tar xvzf GeoLite2-ASN.tar.gz
-RUN rm GeoLite2-City.tar.gz
-RUN rm GeoLite2-ASN.tar.gz
+ENV PATH=/usr/local/zeek/bin:$PATH
 
-ENV PATH=/usr/local/bro/bin:$PATH
-
-VOLUME /usr/local/bro/logs
+VOLUME /usr/local/zeek/logs
 
 RUN pip3 install setuptools wheel
 
-RUN pip3 install bro-pkg && \
-    bro-pkg autoconfig
+RUN pip3 install zkg && \
+    zkg autoconfig
 
-COPY zeek-pkg.conf /root/.bro-pkg/config
-COPY zeek-pkg.conf /usr/local/bro/bro-pkg/config
+COPY zkg.conf /root/.zkg/config
+COPY zkg.conf /usr/local/zeek/zkg/config
 
 EXPOSE 9999
 
-WORKDIR /usr/local/bro/logs
+WORKDIR /usr/local/zeek/logs
 COPY entrypoint.sh /opt/zeek/entrypoint.sh
 RUN chmod +x /opt/zeek/entrypoint.sh
 
